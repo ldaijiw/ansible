@@ -7,6 +7,9 @@ Ansible is an open-source
 - intra-service orchestration
 enabling **infrastructure as code**
 
+**INFRASTRUCTURE AS CODE**  
+- IaC is the process of managing and provisioning computer data centers through machine-readable definition files, rather than physical hardware configuration or interactive configuration tools
+
 Ansible is agentless, temporarily connecting remotely via SSH to do its tasks
 
 ## How Ansible Works
