@@ -6,7 +6,7 @@
 
 # Example targeting host
 - name: Set up App Host
-  hosts: host_app
+  hosts: host_app2
 
 # used to define where this playbook will run
 
@@ -44,11 +44,24 @@
     file:
       path: /etc/nginx/sites-available/default
       state: absent
+  
+  - name: Create new default file
+    file:
+      path: /etc/nginx/sites-available/default
+      state: touch
+  
+  - name: Write nginx config file to listen on 80
+    blockinfile:
+      path: /etc/nginx/sites-available/default
+      block: |
+        server{
+          listen: 80
+          server_name development.local
+          location / {
+            proxy_pass http://127.0.0.1:3000;
+          }
 
-  - name: Copy new proxy config
-    copy:
-      src: /home/ubuntu/nginx_config/proxy_config.conf
-      dest: /etc/nginx/sites-available/default
+        }
 
   - name: Export DB_HOST environment variable
     shell: export DB_HOST=192.168.10.200
@@ -57,6 +70,7 @@
     service:
       name: nginx
       state: restarted
+      enabled: yes
 
   - name: npm install all packages for app
     npm:
@@ -69,9 +83,3 @@
       pm2 start app.js
 
 
-
-
-
-
-# Each task should be specific
-# One playbook can have many tasks
