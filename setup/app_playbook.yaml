@@ -41,10 +41,12 @@
   -name: Installing pm2 with npm
     shell: sudo npm install pm2 -g
   
-  -name: Reconfigure nginx
-    shell: sudo unlink /etc/nginx/sites-enabled/default
-    shell: sudo cp /home/ubuntu/nginx_config/proxy_config.conf /etc/nginx/sites-available/proxy_config.conf
-    shell: sudo ln -s /etc/nginx/sites-available/proxy_config.conf /etc/nginx/sites-enabled/proxy_config.conf
+  - name: Reconfigure nginx
+    shell: |
+      rm -rf /etc/nginx/sites-available/default
+      cp /home/ubuntu/nginx_config/proxy_config.conf /etc/nginx/sites-available/default
+    ignore_errors: yes
+
   
   -name: Export DB_HOST environment variable
     shell: export DB_HOST=192.168.10.200
@@ -56,8 +58,12 @@
   -name: npm install any necessary packages
     shell: npm install -p /home/ubuntu/app
   
-  -name: start app
-    shell: pm2 start app.js
+  - name: start app
+    shell: |
+      cd /home/ubuntu/app
+      pm2 kill
+      pm2 start app.js
+
 
 
 
