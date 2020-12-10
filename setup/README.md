@@ -43,3 +43,7 @@ ansible all -a "command"
 - Name of playbook
 - Hosts in which to run playbook
 - 
+
+**Handlers**
+
+Need to define handler

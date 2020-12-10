@@ -62,15 +62,11 @@
           }
 
         }
-
+    notify:
+      - Restart nginx
   - name: Export DB_HOST environment variable
     shell: export DB_HOST=192.168.10.200
 
-  - name: Restart nginx
-    service:
-      name: nginx
-      state: restarted
-      enabled: yes
 
   - name: npm install all packages for app
     npm:
@@ -83,3 +79,9 @@
       pm2 start app.js
 
 
+  handlers:
+  - name: Restart nginx
+    service:
+      name: nginx
+      state: restarted
+      enabled: yes
