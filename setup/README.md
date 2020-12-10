@@ -35,4 +35,11 @@ ansible <hostname> -a "command"
 ansible all -a "command"
 ```
 
-## Configuring a Server
+## Playbooks
+
+**Main Structure**
+
+- YAML Playbook files starts with 3 dashes
+- Name of playbook
+- Hosts in which to run playbook
+- 

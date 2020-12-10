@@ -6,7 +6,7 @@
 
 # Example targeting host
 - name: Set up App Host
-  hosts: host_b
+  hosts: host_app
 
 # used to define where this playbook will run
 
@@ -17,47 +17,51 @@
 # become is used to get root permission to perform tasks that may require admin access
 
   tasks:
-  -name: Update apt-get
+  - name: Update apt-get
     apt:
       update_cache: yes
       force_apt_get: yes
 
-  -name: Installing git
+  - name: Installing git and nginx
     apt:
-      pkg: git
+      name: ['git', 'nginx']
       state: present
-  
-  -name: Installing nginx
-    apt:
-      pkg: nginx
-      state: present
-  
-  -name: Installing nodejs
+
+  - name: Curl nodejs source
     shell: curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
+  - name: Install nodejs
     apt:
       pkg: nodejs
       state: present
-  
-  -name: Installing pm2 with npm
-    shell: sudo npm install pm2 -g
-  
-  - name: Reconfigure nginx
-    shell: |
-      rm -rf /etc/nginx/sites-available/default
-      cp /home/ubuntu/nginx_config/proxy_config.conf /etc/nginx/sites-available/default
-    ignore_errors: yes
 
-  
-  -name: Export DB_HOST environment variable
+  - name: Installing pm2 with npm
+    npm:
+      name: pm2
+      global: yes
+
+  - name: Remove default nginx config
+    file:
+      path: /etc/nginx/sites-available/default
+      state: absent
+
+  - name: Copy new proxy config
+    copy:
+      src: /home/ubuntu/nginx_config/proxy_config.conf
+      dest: /etc/nginx/sites-available/default
+
+  - name: Export DB_HOST environment variable
     shell: export DB_HOST=192.168.10.200
-  
-  -name: Restart nginx
-    service: nginx
-    state: restarted
-  
-  -name: npm install any necessary packages
-    shell: npm install -p /home/ubuntu/app
-  
+
+  - name: Restart nginx
+    service:
+      name: nginx
+      state: restarted
+
+  - name: npm install all packages for app
+    npm:
+      path: /home/ubuntu/app
+
   - name: start app
     shell: |
       cd /home/ubuntu/app
@@ -68,7 +72,6 @@
 
 
 
-  
 
 # Each task should be specific
 # One playbook can have many tasks
