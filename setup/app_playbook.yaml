@@ -1,0 +1,68 @@
+# Example Playbook written in YAML
+
+# YAML Playbook file starts with three dashes
+
+---
+
+# Example targeting host
+- name: Set up App Host
+  hosts: host_b
+
+# used to define where this playbook will run
+
+  gather_facts: yes
+# gathers facts/state of machine before running playbook
+
+  become: true
+# become is used to get root permission to perform tasks that may require admin access
+
+  tasks:
+  -name: Update apt-get
+    apt:
+      update_cache: yes
+      force_apt_get: yes
+
+  -name: Installing git
+    apt:
+      pkg: git
+      state: present
+  
+  -name: Installing nginx
+    apt:
+      pkg: nginx
+      state: present
+  
+  -name: Installing nodejs
+    shell: curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    apt:
+      pkg: nodejs
+      state: present
+  
+  -name: Installing pm2 with npm
+    shell: sudo npm install pm2 -g
+  
+  -name: Reconfigure nginx
+    shell: sudo unlink /etc/nginx/sites-enabled/default
+    shell: sudo cp /home/ubuntu/nginx_config/proxy_config.conf /etc/nginx/sites-available/proxy_config.conf
+    shell: sudo ln -s /etc/nginx/sites-available/proxy_config.conf /etc/nginx/sites-enabled/proxy_config.conf
+  
+  -name: Export DB_HOST environment variable
+    shell: export DB_HOST=192.168.10.200
+  
+  -name: Restart nginx
+    service: nginx
+    state: restarted
+  
+  -name: npm install any necessary packages
+    shell: npm install -p /home/ubuntu/app
+  
+  -name: start app
+    shell: pm2 start app.js
+
+
+
+
+  
+
+# Each task should be specific
+# One playbook can have many tasks
