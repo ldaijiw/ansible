@@ -4,15 +4,18 @@ echo Ansible instance IP address:
 
 read ip_addr
 
-scp -i ~/.ssh/eng74_leo_aws_key.pem hosts_to_add ubuntu@$ip_addr:/home/ubuntu/hosts_to_add
 
 scp -i ~/.ssh/eng74_leo_aws_key.pem ~/.ssh/eng74_leo_aws_key.pem ubuntu@$ip_addr:~/.ssh/eng74_leo_aws_key.pem
 
+# copy playbooks folder
 scp -i ~/.ssh/eng74_leo_aws_key.pem -r playbooks/ ubuntu@$ip_addr:/home/ubuntu/playbooks/ 
-
+# copy app folder
 scp -i ~/.ssh/eng74_leo_aws_key.pem -r code/app/ ubuntu@$ip_addr:/home/ubuntu/app/ 
-
+# copy nginx config folder
 scp -i ~/.ssh/eng74_leo_aws_key.pem -r code/nginx_config/ ubuntu@$ip_addr:/home/ubuntu/nginx_config/
+# copy hosts to add file
+scp -i ~/.ssh/eng74_leo_aws_key.pem hosts_to_add ubuntu@$ip_addr:/home/ubuntu/hosts_to_add
+
 
 ssh -i ~/.ssh/eng74_leo_aws_key.pem ubuntu@$ip_addr << EOF
 
