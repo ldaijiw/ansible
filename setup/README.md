@@ -47,3 +47,23 @@ ansible all -a "command"
 **Handlers**
 
 Need to define handler
+
+
+### Template and Variables
+
+Templates are largely text based or markup languages that don't have scripting and logical capabilities like python or ruby
+
+What we will be able to do, is interpolate variables into them, making them dynamic
+
+- works with jinja
+- interpolates using {% %} or {{}}
+- good for interpolating variables for config files or HTML
+
+
+
+
+### Variables
+
+A location where we can define variables to be used and interpolated in playbooks and/or templates
+
+- defined dynamically in YAML

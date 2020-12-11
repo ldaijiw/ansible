@@ -6,7 +6,7 @@
 
 # Example targeting host
 - name: Set up App Host
-  hosts: host_app2
+  hosts: host_app
 
 # used to define where this playbook will run
 
@@ -16,16 +16,39 @@
   become: true
 # become is used to get root permission to perform tasks that may require admin access
 
+  vars:
+    ip_db:
+      DB_HOST: 123.121.121.1
+  
+  environment: "{{ ip_db }}"
+
   tasks:
   - name: Update apt-get
     apt:
       update_cache: yes
       force_apt_get: yes
 
-  - name: Installing git and nginx
+  - name: Installing git
     apt:
-      name: ['git', 'nginx']
+      name: git
       state: present
+
+  - name: Installing nginx
+    apt:
+      name: nginx
+      state: present
+
+  - name: Synchronise app folder
+    synchronize:
+      src: /home/ubuntu/app/
+      dest: /home/ubuntu/app/
+      recursive: yes
+
+  - name: Synchronise nginx config folder
+    synchronize:
+      src: /home/ubuntu/nginx_config/
+      dest: /home/ubuntu/nginx_config/
+      recursive: yes
 
   - name: Curl nodejs source
     shell: curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
@@ -44,26 +67,18 @@
     file:
       path: /etc/nginx/sites-available/default
       state: absent
-  
-  - name: Create new default file
-    file:
-      path: /etc/nginx/sites-available/default
-      state: touch
-  
-  - name: Write nginx config file to listen on 80
-    blockinfile:
-      path: /etc/nginx/sites-available/default
-      block: |
-        server{
-          listen: 80
-          server_name development.local
-          location / {
-            proxy_pass http://127.0.0.1:3000;
-          }
+    
+  - name: Copy new nginx config
+    copy:
+      src: /home/ubuntu/nginx_config/proxy_config.conf
+      dest: /etc/nginx/sites-available/default
 
-        }
-    notify:
-      - Restart nginx
+  - name: Restart nginx
+    service:
+      name: nginx
+      state: restarted
+      enabled: yes
+
   - name: Export DB_HOST environment variable
     shell: export DB_HOST=192.168.10.200
 
@@ -77,11 +92,3 @@
       cd /home/ubuntu/app
       pm2 kill
       pm2 start app.js
-
-
-  handlers:
-  - name: Restart nginx
-    service:
-      name: nginx
-      state: restarted
-      enabled: yes
