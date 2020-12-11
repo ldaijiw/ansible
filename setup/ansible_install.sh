@@ -15,10 +15,12 @@ scp -i ~/.ssh/eng74_leo_aws_key.pem -r code/app/ ubuntu@$ip_addr:/home/ubuntu/ap
 scp -i ~/.ssh/eng74_leo_aws_key.pem -r code/nginx_config/ ubuntu@$ip_addr:/home/ubuntu/nginx_config/
 # copy hosts to add file
 scp -i ~/.ssh/eng74_leo_aws_key.pem hosts_to_add ubuntu@$ip_addr:/home/ubuntu/hosts_to_add
+# copy ansible.cfg to add file
+scp -i ~/.ssh/eng74_leo_aws_key.pem ansible.cfg ubuntu@$ip_addr:/home/ubuntu/ansible.cfg
 
 
 ssh -i ~/.ssh/eng74_leo_aws_key.pem ubuntu@$ip_addr << EOF
-
+sudo hostnamectl set-hostname ansible-controller
 sudo apt update
 sudo apt install software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
@@ -36,9 +38,12 @@ pip3 install boto
 pip3 install boto3
 
 sudo cp hosts_to_add /etc/ansible/hosts
+sudo cp ansible.cfg /etc/ansible/ansible.cfg
 sudo chmod 400 ~/.ssh/eng74_leo_aws_key.pem
 
-ansible-playbook /home/ubuntu/playbooks/app_playbook.yaml
+ansible-playbook playbooks/app_playbook.yaml
+
+ansible-playbook playbooks/db_playbook.yaml
 EOF
 
 

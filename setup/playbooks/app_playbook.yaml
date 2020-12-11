@@ -80,7 +80,7 @@
       enabled: yes
 
   - name: Export DB_HOST environment variable
-    shell: export DB_HOST=192.168.10.200
+    shell: echo "export DB_HOST=172.31.38.233" >> ~/.bashrc
 
 
   - name: npm install all packages for app

@@ -1,0 +1,50 @@
+# Example Playbook written in YAML
+
+# YAML Playbook file starts with three dashes
+
+---
+
+# Example targeting host
+- name: Set up DB host
+  hosts: host_db
+
+# used to define where this playbook will run
+
+  gather_facts: yes
+# gathers facts/state of machine before running playbook
+
+  become: true
+# become is used to get root permission to perform tasks that may require admin access
+
+
+  tasks:
+  - name: Update apt-get
+    apt:
+      update_cache: yes
+      force_apt_get: yes
+
+  - name: Import MongoDB GPG Key for version 3.2
+    shell: wget -qO - https://www.mongodb.org/static/pgp/server-3.2.asc | sudo apt-key add -
+
+  - name: Create 3.2 list file
+    shell: echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+
+
+  - name: Update apt-get for mongo
+    apt:
+      update_cache: yes
+      force_apt_get: yes
+
+  - name: Install mongodb
+    apt:
+      name: mongodb-org=3.2.20
+      state: present
+  
+  - name: Configure IP for MongoDB
+    shell: sudo sed -i 's/127.0.0.1/0.0.0.0/' /etc/mongod.conf
+  
+  - name: Start Mongodb server
+    service:
+      name: mongod
+      state: started
+      enabled: yes
