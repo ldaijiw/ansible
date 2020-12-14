@@ -40,14 +40,14 @@
 
   - name: Synchronise app folder
     synchronize:
-      src: /home/ubuntu/app/
-      dest: /home/ubuntu/app/
+      src: /home/ubuntu/app
+      dest: /home/ubuntu/
       recursive: yes
 
   - name: Synchronise nginx config folder
     synchronize:
-      src: /home/ubuntu/nginx_config/
-      dest: /home/ubuntu/nginx_config/
+      src: /home/ubuntu/nginx_config
+      dest: /home/ubuntu/
       recursive: yes
 
   - name: Curl nodejs source
@@ -92,3 +92,4 @@
       cd /home/ubuntu/app
       pm2 kill
       pm2 start app.js
+    become_user: root
