@@ -115,3 +115,32 @@ db1.machine
 
 **END GOAL IS TO HAVE ENVIRONMENTS THAT ARE CONSISTENT**
 
+## API Keys and Authentication Security
+
+- Secrets
+- Environment var
+- Services like ansible vault
+
+What to consider:
+- Is it protected from going online (.gitignore)
+- Is it segregated from code that goes online (Environment variables)
+- Is it encrypted (Services like ansible vault)
+- How hard is it it to share with colleagues (Hashicorp Vault)
+
+### Ansible Vault
+
+Free tool to allow for encryption of files
+
+Creating a file
+```
+ansible-vault create file.yml
+```
+
+- Asks for password
+- Re enter password
+- Opens file to type
+
+Encrypts the file, can only be edited with
+```
+ansible-vault edit file.yml
+```
